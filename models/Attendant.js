@@ -1,17 +1,17 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const AttendantSchema = mongoose.Schema({
+const AttendantSchema = mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     staffId: {
-        type: String,
-        unique: true,
+      type: String,
+      unique: true,
     },
-    createdAt: {
-        type: mongoose.Types.ObjectId,
-    }
-});
+  },
+  { timestamps: true },
+);
 
-module.exports = mongoose.model('Attendant', AttendantSchema);
+module.exports = mongoose.model("Attendant", AttendantSchema);
