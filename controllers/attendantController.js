@@ -9,7 +9,9 @@ const createAttendant = async (req, res) => {
   }
 
   const attendant = await Attendant.create({ name });
-  res.status(StatusCodes.CREATED).json({ attendant });
+  res
+    .status(StatusCodes.CREATED)
+    .json({ attendant, msg: "Attendant created successfully" });
 };
 
 const getAllAttendants = async (req, res) => {

@@ -8,7 +8,11 @@ const connectDB = require("./db/connect");
 const authorRouter = require("./routes/authorRoute");
 const bookRouter = require("./routes/bookRoute");
 const studentRouter = require("./routes/studentRoute");
-const attendantController = require("./routes/attendantRoute");
+const attendantRouter = require("./routes/attendantRoute");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger");
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const errorHandlerMiddleware = require("./middleware/error-handler");
 const notFoundMiddleware = require("./middleware/not-found");
@@ -18,7 +22,7 @@ app.use(express.json());
 app.use("/api/v1/authors", authorRouter);
 app.use("/api/v1/books", bookRouter);
 app.use("/api/v1/students", studentRouter);
-app.use("/api/v1/attendants", attendantController);
+app.use("/api/v1/attendants", attendantRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

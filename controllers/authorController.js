@@ -8,7 +8,9 @@ const createAuthor = async (req, res) => {
     throw new CustomError.BadRequestError("Name is required!!");
   }
   const author = await Author.create({ name, bio });
-  res.status(StatusCodes.CREATED).json({ author });
+  res
+    .status(StatusCodes.CREATED)
+    .json({ author, msg: "Author created successfully" });
 };
 
 const getAllAuthors = async (req, res) => {

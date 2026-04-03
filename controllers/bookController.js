@@ -3,6 +3,7 @@ const CustomError = require("../errors");
 const Book = require("../models/Book");
 const Student = require("../models/Student");
 const Attendant = require("../models/Attendant");
+const Author = require("../models/Author");
 
 const createBook = async (req, res) => {
   const { title, isbn, authors } = req.body;
@@ -18,13 +19,52 @@ const createBook = async (req, res) => {
 };
 
 const getAllBooks = async (req, res) => {
-  const books = await Book.find({}).populate("authors");
-  res.status(StatusCodes.OK).json({ books, count: books.length });
+  //pagination
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  // filtering
+  const queryObject = {};
+  // search by title
+  if (req.query.title) {
+    queryObject.title = { $regex: req.query.title, $options: "i" };
+  }
+  // search by author name
+  if (req.query.author) {
+    const authors = await Author.find({
+      name: { $regex: req.query.author, $options: "i" },
+    });
+    const authorIds = authors.map((author) => author._id);
+    queryObject.authors = { $in: authorIds };
+  }
+
+  const totalBooks = await Book.countDocuments(queryObject);
+
+  const books = await Book.find(queryObject)
+    .populate("authors")
+    .populate("borrowedBy")
+    .populate("issuedBy")
+    .sort({ title: 1 })
+    .skip(skip)
+    .limit(limit);
+
+  const totalPages = Math.ceil(totalBooks / limit);
+  res.status(StatusCodes.OK).json({
+    books,
+    count: books.length,
+    currentPage: page,
+    totalPages,
+    totalBooks,
+  });
 };
 
 const getSingleBook = async (req, res) => {
   const { id: bookId } = req.params;
-  const book = await Book.findById(bookId).populate("authors");
+  const book = await Book.findById(bookId)
+    .populate("authors")
+    .populate("borrowedBy")
+    .populate("issuedBy");
   if (!book) {
     throw new CustomError.NotFoundError(`No book with id: ${bookId}`);
   }
@@ -34,7 +74,10 @@ const getSingleBook = async (req, res) => {
 const updateBook = async (req, res) => {
   const { id: bookId } = req.params;
   const { title, isbn, authors } = req.body;
-  const book = await Book.findOne({ _id: bookId }).populate("authors");
+  const book = await Book.findOne({ _id: bookId })
+    .populate("authors")
+    .populate("borrowedBy")
+    .populate("issuedBy");
   if (!book) {
     throw new CustomError.NotFoundError(`No book with id: ${bookId}`);
   }
@@ -56,7 +99,7 @@ const deleteBook = async (req, res) => {
 
 const borrowBook = async (req, res) => {
   const { id: bookId } = req.params;
-  const book = await Book.findById({ _id: bookId });
+  const book = await Book.findById(bookId);
   if (!book) {
     throw new CustomError.NotFoundError(`No book with id: ${bookId}`);
   }
@@ -73,12 +116,12 @@ const borrowBook = async (req, res) => {
     );
   }
 
-  const student = await Student.findById({ studentId });
-  if (!studentId) {
+  const student = await Student.findById(studentId);
+  if (!student) {
     throw new CustomError.NotFoundError(`No student with id: ${studentId}`);
   }
-  const attendant = await Attendant.findById({ attendantId });
-  if (!attendantId) {
+  const attendant = await Attendant.findById(attendantId);
+  if (!attendant) {
     throw new CustomError.NotFoundError(`No attendant with id: ${attendantId}`);
   }
 
@@ -87,7 +130,25 @@ const borrowBook = async (req, res) => {
   book.status = "OUT";
   book.returnDate = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000);
   await book.save();
+  await book.populate(["authors", "borrowedBy", "issuedBy"]);
   res.status(StatusCodes.OK).json({ msg: "Book has been given out" });
+};
+
+const returnBook = async (req, res) => {
+  const { id: bookId } = req.params;
+  const book = await Book.findById(bookId);
+  if (book.status === "IN") {
+    throw new CustomError.NotFoundError(
+      `No book with id: ${bookId} is currently borrowed`,
+    );
+  }
+  book.borrowedBy = null;
+  book.issuedBy = null;
+  book.returnDate = null;
+  book.status = "IN";
+  await book.save();
+  await book.populate(["authors", "borrowedBy", "issuedBy"]);
+  res.status(StatusCodes.OK).json({ msg: "Book has been returned" });
 };
 
 module.exports = {
@@ -97,4 +158,5 @@ module.exports = {
   updateBook,
   deleteBook,
   borrowBook,
+  returnBook,
 };
