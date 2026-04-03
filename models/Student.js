@@ -19,4 +19,8 @@ const StudentSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+StudentSchema.pre("save", function () {
+  this.studentId = this._id;
+});
+
 module.exports = mongoose.model("Student", StudentSchema);

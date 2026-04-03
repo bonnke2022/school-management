@@ -14,4 +14,8 @@ const AttendantSchema = mongoose.Schema(
   { timestamps: true },
 );
 
+AttendantSchema.pre("save", function () {
+  this.staffId = this._id;
+});
+
 module.exports = mongoose.model("Attendant", AttendantSchema);

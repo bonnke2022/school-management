@@ -1,16 +1,29 @@
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
+const Student = require("../models/Student");
 
 const createStudent = async (req, res) => {
-  res.send("create student");
+  const { name, email } = req.body;
+  if (!email || !name) {
+    throw new CustomError.BadRequestError("Please provide name and email");
+  }
+
+  const student = await Student.create({ name, email });
+  res.status(StatusCodes.CREATED).json({ student });
 };
 
 const getAllStudents = async (req, res) => {
-  res.send("get all Students");
+  const students = await Student.find({});
+  res.status(StatusCodes.OK).json({ students, count: students.length });
 };
 
 const getSingleStudent = async (req, res) => {
-  res.send("get single student");
+  const { id: studentId } = req.params;
+  const student = await Student.findById(studentId);
+  if (!student) {
+    throw new CustomError.NotFoundError(`No student with id ${studentId}`);
+  }
+  res.status(StatusCodes.OK).json({ student });
 };
 
 module.exports = { createStudent, getAllStudents, getSingleStudent };
