@@ -4,9 +4,6 @@ const Student = require("../models/Student");
 
 const createStudent = async (req, res) => {
   const { name, email } = req.body;
-  if (!email || !name) {
-    throw new CustomError.BadRequestError("Please provide name and email");
-  }
 
   const student = await Student.create({ name, email });
   res.status(StatusCodes.CREATED).json({ student });

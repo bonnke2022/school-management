@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const { validateStudent } = require("../middleware/validator");
+
 const {
   createStudent,
   getAllStudents,
@@ -54,7 +56,7 @@ const {
  *                 count:
  *                   type: integer
  */
-router.route("/").post(createStudent).get(getAllStudents);
+router.route("/").post(validateStudent, createStudent).get(getAllStudents);
 
 /**
  * @swagger

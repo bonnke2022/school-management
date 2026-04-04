@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { validateAuthor } = require("../middleware/validator");
 
 const {
   createAuthor,
@@ -56,7 +57,7 @@ const {
  *                   type: integer
  */
 
-router.route("/").post(createAuthor).get(getAllAuthors);
+router.route("/").post(validateAuthor, createAuthor).get(getAllAuthors);
 
 /**
  * @swagger

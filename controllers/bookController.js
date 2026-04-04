@@ -7,9 +7,15 @@ const Author = require("../models/Author");
 
 const createBook = async (req, res) => {
   const { title, isbn, authors } = req.body;
-  if (!title || !isbn) {
-    throw new CustomError.BadRequestError("Please provide a title and isbn");
+
+  //Prevent duplicate isbn
+  const alreadyExistingIsbn = await Book.findOne({ isbn });
+  if (alreadyExistingIsbn) {
+    throw new CustomError.BadRequestError(
+      "A book with the same isbn already exists",
+    );
   }
+
   const book = await Book.create({
     title,
     isbn,

@@ -11,6 +11,7 @@ const studentRouter = require("./routes/studentRoute");
 const attendantRouter = require("./routes/attendantRoute");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
+const overdueCheck = require("./cronJobs");
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -32,6 +33,7 @@ const port = process.env.PORT || 5000;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
+    overdueCheck.start();
     app.listen(port, () => {
       console.log(`Server is listening on port ${port}...`);
     });

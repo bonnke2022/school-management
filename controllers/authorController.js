@@ -21,9 +21,7 @@ const getAllAuthors = async (req, res) => {
 const getSingleAuthor = async (req, res) => {
   const { id: authorId } = req.params;
   const author = await Author.findById(authorId);
-  if (!author) {
-    throw new CustomError.NotFoundError(`No author with id: ${authorId}`);
-  }
+
   res.status(StatusCodes.OK).json({ author });
 };
 
@@ -32,9 +30,6 @@ const updateAuthor = async (req, res) => {
   const { name, bio } = req.body;
   const author = await Author.findOne({ _id: authorId });
 
-  if (!author) {
-    throw new CustomError.NotFoundError(`No author with id: ${authorId}`);
-  }
   author.name = name;
   author.bio = bio;
   await author.save();

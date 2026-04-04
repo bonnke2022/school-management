@@ -32,6 +32,10 @@ const BookSchema = new mongoose.Schema(
     returnDate: {
       type: Date,
     },
+    isOverdue: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

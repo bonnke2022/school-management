@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const { validateBook, validateBorrowBook } = require("../middleware/validator");
+
 const {
   createBook,
   getAllBooks,
@@ -11,7 +13,7 @@ const {
   returnBook,
 } = require("../controllers/bookController");
 
-router.route("/").post(createBook).get(getAllBooks);
+router.route("/").post(validateBook, createBook).get(getAllBooks);
 
 /**
  * @swagger
@@ -147,7 +149,7 @@ router.route("/:id").get(getSingleBook).patch(updateBook).delete(deleteBook);
  *         description: Book not found
  */
 
-router.route("/:id/borrow").patch(borrowBook);
+router.route("/:id/borrow").patch(validateBorrowBook, borrowBook);
 
 /**
  * @swagger

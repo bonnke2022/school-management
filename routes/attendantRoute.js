@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { validateAttendant } = require("../middleware/validator");
 
 const {
   createAttendant,
@@ -53,6 +54,9 @@ const {
  *         description: No attendants found
  */
 
-router.route("/").post(createAttendant).get(getAllAttendants);
+router
+  .route("/")
+  .post(validateAttendant, createAttendant)
+  .get(getAllAttendants);
 
 module.exports = router;
