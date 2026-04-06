@@ -12,6 +12,7 @@ const {
   borrowBook,
   returnBook,
 } = require("../controllers/bookController");
+const { authenticateAttendant } = require("../middleware/authentication");
 
 router.route("/").post(validateBook, createBook).get(getAllBooks);
 
@@ -67,7 +68,11 @@ router.route("/").post(validateBook, createBook).get(getAllBooks);
  *                   type: integer
  */
 
-router.route("/:id").get(getSingleBook).patch(updateBook).delete(deleteBook);
+router
+  .route("/:id")
+  .get(getSingleBook)
+  .patch(authenticateAttendant, updateBook)
+  .delete(authenticateAttendant, deleteBook);
 
 /**
  * @swagger
@@ -94,6 +99,8 @@ router.route("/:id").get(getSingleBook).patch(updateBook).delete(deleteBook);
  *   patch:
  *     summary: Update a book by ID
  *     tags: [Books]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -128,6 +135,8 @@ router.route("/:id").get(getSingleBook).patch(updateBook).delete(deleteBook);
  *   delete:
  *     summary: Delete a book by ID
  *     tags: [Books]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -149,7 +158,9 @@ router.route("/:id").get(getSingleBook).patch(updateBook).delete(deleteBook);
  *         description: Book not found
  */
 
-router.route("/:id/borrow").patch(validateBorrowBook, borrowBook);
+router
+  .route("/:id/borrow")
+  .patch(authenticateAttendant, validateBorrowBook, borrowBook);
 
 /**
  * @swagger
@@ -157,6 +168,8 @@ router.route("/:id/borrow").patch(validateBorrowBook, borrowBook);
  *   patch:
  *     summary: Borrow a book
  *     tags: [Books]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -194,7 +207,7 @@ router.route("/:id/borrow").patch(validateBorrowBook, borrowBook);
  *         description: Book, student or attendant not found
  */
 
-router.route("/:id/return").patch(returnBook);
+router.route("/:id/return").patch(authenticateAttendant, returnBook);
 
 /**
  * @swagger
@@ -202,6 +215,8 @@ router.route("/:id/return").patch(returnBook);
  *   patch:
  *     summary: Return a book
  *     tags: [Books]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: id

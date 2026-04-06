@@ -16,6 +16,15 @@ const options = {
     ],
   },
   apis: ["./routes/*.js"],
+  components: {
+    securitySchemas: {
+      cookieAuth: {
+        type: "apiKey",
+        in: "cookie",
+        name: "token",
+      },
+    },
+  },
 };
 
 const swaggerSpec = swaggerJsdoc(options);
