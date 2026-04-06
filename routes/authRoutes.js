@@ -9,6 +9,39 @@ const {
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     Attendant:
+ *       type: object
+ *       required:
+ *         - name
+ *         - password
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated MongoDB id
+ *         staffId:
+ *           type: string
+ *           description: Same as _id, auto-generated
+ *         name:
+ *           type: string
+ *           description: Attendant's full name
+ *         password:
+ *           type: string
+ *           description: Attendant's hashed password
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *       example:
+ *         name: John Smith
+ *         password: secret123
+ */
+
+/**
+ * @swagger
  * /auth/attendants:
  *   get:
  *     summary: Get all attendants
