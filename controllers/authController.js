@@ -6,7 +6,7 @@ const { attachCookiesToResponse, createTokenUser } = require("../utils");
 const register = async (req, res) => {
   const { name, password } = req.body;
 
-  const attendantAlreadyExists = await Attendant.findOne({ name, password });
+  const attendantAlreadyExists = await Attendant.findOne({ name });
   if (attendantAlreadyExists) {
     throw new CustomError.BadRequestError("Attendant already exists");
   }
