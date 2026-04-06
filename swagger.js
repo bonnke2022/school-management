@@ -14,17 +14,17 @@ const options = {
         description: "Development server",
       },
     ],
-  },
-  apis: ["./routes/*.js"],
-  components: {
-    securitySchemas: {
-      cookieAuth: {
-        type: "apiKey",
-        in: "cookie",
-        name: "token",
+    components: {
+      securitySchemes: {
+        cookieAuth: {
+          type: "apiKey",
+          in: "cookie",
+          name: "token",
+        },
       },
     },
   },
+  apis: ["./routes/*.js"],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
