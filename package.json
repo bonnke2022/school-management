@@ -1,6 +1,10 @@
 {
   "name": "School-Management",
   "version": "1.0.0",
+  "engines": {
+    "node": "22.20.0",
+    "npm": "11.10.0"
+  },
   "description": "",
   "main": "app.js",
   "scripts": {
