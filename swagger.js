@@ -13,6 +13,10 @@ const options = {
         url: "http://localhost:5000/api/v1",
         description: "Development server",
       },
+      {
+        url: "https://your-railway-url.up.railway.app/api/v1",
+        description: "Production server",
+      },
     ],
     components: {
       securitySchemes: {
